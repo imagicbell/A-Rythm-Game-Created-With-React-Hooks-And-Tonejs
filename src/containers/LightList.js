@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Light from '../components/Light';
-import './LightList.css'
+import './LightList.css';
 
 const lights = [
 	"#fc773e",
@@ -10,16 +10,18 @@ const lights = [
 	"#3ec3fc"
 ];
 
-function LightList() {
+function LightList({ lightStates }) {
 	return (
 		<div className="lightlist">
 			{
 				lights.map((color, index) => (
-					<Light key={index} index={index} color={color} state="normal" />
+					<Light key={index} index={index} color={color} state={lightStates[index] ? "active" : "normal"} />
 				))
 			}
 		</div>
 	)
 }
 
-export default LightList;
+export default connect(state => ({
+	lightStates: state.lights.activeStates
+}))(LightList);

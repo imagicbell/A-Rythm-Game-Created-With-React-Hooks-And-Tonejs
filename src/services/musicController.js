@@ -71,8 +71,15 @@ export default class musicController {
 		//todo: read event from midi json data
 		midi.tracks[0].notes.forEach((note, noteIndex) => {
 			Tone.Transport.schedule(time => {
-				Tone.Draw.schedule(null, time);
+				Tone.Draw.schedule(() => {
+					this.activeLight(noteIndex % 5);
+				}, time);
 			}, note.time);
+			Tone.Transport.schedule(time => {
+				Tone.Draw.schedule(() => {
+					this.deactiveLight(noteIndex % 5);
+				}, time);
+			}, note.time+note.duration);
 		});
 	
 		Tone.Transport.schedule(time => {

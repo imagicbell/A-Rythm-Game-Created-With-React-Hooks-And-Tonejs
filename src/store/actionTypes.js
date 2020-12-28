@@ -1,0 +1,2 @@
+export const ACTIVE_LIGHT = "ACTIVE_LIGHT";
+export const DEACTIVE_LIGHT = "DEACTIVE_LIGHT";
