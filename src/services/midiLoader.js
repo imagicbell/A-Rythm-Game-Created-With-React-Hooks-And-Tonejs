@@ -6,6 +6,7 @@ export async function loadMidiFromUrl(url: String) {
 	prepareMidi(midi);
 	// console.log(`read midi file\n ${JSON.stringify(midi, null, "\t")}`);
 	console.log("read midi file", midi);
+	return midi;
 }
 
 export async function loadMidiFromFile(file: File) {
@@ -13,6 +14,7 @@ export async function loadMidiFromFile(file: File) {
 	const midi = new Midi(midiData);
 	prepareMidi(midi);
 	console.log("read midi file", midi);
+	return midi;
 }
 
 function prepareMidi(midi) {

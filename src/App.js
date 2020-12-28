@@ -1,11 +1,10 @@
 import './App.css';
-import { loadMidiFromUrl } from './services/midiLoader';
-
-loadMidiFromUrl(process.env.PUBLIC_URL + '/midiFiles/Analogsynth2_highmp3.mid');
+import Test from './components/Test'
 
 function App() {
   return (
     <div className="App">
+      <Test />
     </div>
   );
 }
