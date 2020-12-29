@@ -1,11 +1,14 @@
 import { Midi } from '@tonejs/midi';
 import { readFileAsBinary } from '../services/fileReader';
+import { editMusic } from './musicEditor';
 
 export async function loadMidiFromUrl(url: String) {
 	const midi = await Midi.fromUrl(url);
 	prepareMidi(midi);
 	// console.log(`read midi file\n ${JSON.stringify(midi, null, "\t")}`);
 	console.log("read midi file", midi);
+
+	editMusic(midi);
 	return midi;
 }
 

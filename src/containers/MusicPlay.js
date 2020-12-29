@@ -7,8 +7,9 @@ class MusicPlay extends Component {
 	componentDidMount() {
 		this.musicController = new musicController();
 		this.musicController.loadMusic("Fur_Elise");
-		this.musicController.onNoteBegin = note => this.props.activeLight(note.index % 5);
-		this.musicController.onNoteEnd = note => this.props.deactiveLight(note.index % 5);
+		this.musicController.onNoteBegin = noteInfo => this.props.activeLight(noteInfo.lightId);
+		this.musicController.onNoteEnd = noteInfo => this.props.deactiveLight(noteInfo.lightId);
+		this.musicController.onNotePreview = noteInfo => {};
 	}
 
 	render() {

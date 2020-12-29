@@ -1,11 +1,13 @@
 import * as Tone from 'tone';
 import { loadMidiFromUrl } from './midiLoader';
-import { type Note } from '../global/types';
+import { type NotePlayInfo, PLAY_TYPE_PRESS } from '../global/notes';
+import { NOTE_PREVIEW_TIME } from '../global/constants';
 
 export default class musicController {
 	musicLoaded: Boolean = false;
-	onNoteBegin: (note: Note) => void = null;
-	onNoteEnd: (note: Note) => void = null;
+	onNoteBegin: (note: NotePlayInfo) => void = null;
+	onNoteEnd: (note: NotePlayInfo) => void = null;
+	onNotePreview: (note: NotePlayInfo) => void = null;
 
 	loadMusic(musicName: String) {
 		const url = process.env.PUBLIC_URL + `/midiFiles/${musicName}`;
@@ -67,32 +69,36 @@ export default class musicController {
 			}
 		});
 	
-		//todo: read event from midi json data
-		midi.tracks[0].notes.forEach((note, noteIndex) => {
-			Tone.Transport.schedule(time => {
-				Tone.Draw.schedule(() => {
-					if (this.onNoteBegin) {
-						this.onNoteBegin({
-							midi: note.midi,
-							index: noteIndex,
-							track: 
-						});
-					}
-				}, time);
-			}, note.time);
-			Tone.Transport.schedule(time => {
-				Tone.Draw.schedule(() => {
-					if (this.onNoteEnd) {
-						this.onNoteEnd({
-							midi: note.midi,
-							duration: note.duration,
-							index: noteIndex
-						});
-					}
-				}, time);
-			}, note.time+note.duration);
-		});
-	
+		for (const track of midi.tracks) {
+			for (const note of track.notes) {
+				if (!note.playInfo)
+					continue;
+				
+				//preview
+				Tone.Transport.schedule(time => {
+					Tone.Draw.schedule(() => {
+						this.onNotePreview(note.playInfo);
+					}, time);
+				}, note.time - NOTE_PREVIEW_TIME);
+
+				//begin
+				Tone.Transport.schedule(time => {
+					Tone.Draw.schedule(() => {
+						this.onNoteBegin(note.playInfo);
+					}, time);
+				}, note.time);
+
+				//end
+				if (note.playInfo.playType === PLAY_TYPE_PRESS) {
+					Tone.Transport.schedule(time => {
+						Tone.Draw.schedule(() => {
+							this.onNoteEnd(note.playInfo);
+						}, time);
+					}, note.time + note.duration);
+				}
+			}
+		}
+
 		Tone.Transport.schedule(time => {
 			console.log("midiplayer: finish play");
 			this.stopMusic();

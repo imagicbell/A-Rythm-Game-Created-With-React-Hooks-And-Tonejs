@@ -1,7 +1,8 @@
 import { ACTIVE_LIGHT, DEACTIVE_LIGHT } from '../actionTypes';
+import { LIGHT_NUM } from '../../global/constants';
 
 const initState = {
-	activeStates: [0, 0, 0, 0, 0]
+	activeStates: Array(LIGHT_NUM).fill(0),
 }
 
 export default function lights(state=initState, action) {

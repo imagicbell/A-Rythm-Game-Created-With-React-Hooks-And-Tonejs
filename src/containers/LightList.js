@@ -1,25 +1,27 @@
 import { connect } from 'react-redux';
+import { Component } from 'react';
+import { LIGHT_COLORS } from '../global/constants';
 import Light from '../components/Light';
 import './LightList.css';
 
-const lights = [
-	"#fc773e",
-	"#3efc77",
-	"#773efc",
-	"#a3122f",
-	"#3ec3fc"
-];
+class LightList extends Component {
+	constructor(props) {
+		super(props);
+		this.lightColors = LIGHT_COLORS[Math.floor(Math.random() * LIGHT_COLORS.length)];
+	}
 
-function LightList({ lightStates }) {
-	return (
-		<div className="lightlist">
-			{
-				lights.map((color, index) => (
-					<Light key={index} index={index} color={color} state={lightStates[index] ? "active" : "normal"} />
-				))
-			}
-		</div>
-	)
+	render() {
+		const { lightStates } = this.props;
+		return (
+			<div className="lightlist">
+				{
+					this.lightColors.map((color, index) => (
+						<Light key={index} index={index} color={color} state={lightStates[index] ? "active" : "normal"} />
+					))
+				}
+			</div>
+		)
+	}
 }
 
 export default connect(state => ({
