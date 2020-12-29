@@ -1,27 +1,27 @@
 import * as Tone from 'tone';
 import { loadMidiFromUrl } from './midiLoader';
-
-const MUSICSTATE = {
-  START: "started",
-  STOP: "stopped",
-  PAUSE: "paused"
-}
+import { type Note } from '../global/types';
 
 export default class musicController {
-	player: Tone.Player = null;
 	musicLoaded: Boolean = false;
-	musicState: String = MUSICSTATE.STOP;
+	onNoteBegin: (note: Note) => void = null;
+	onNoteEnd: (note: Note) => void = null;
 
 	loadMusic(musicName: String) {
 		const url = process.env.PUBLIC_URL + `/midiFiles/${musicName}`;
-		this.player = new Tone.Player(`${url}.mp3`).toDestination();
+		const player = new Tone.Player(`${url}.mp3`).toDestination();
 		Promise.all([
 			Tone.loaded(),
-			loadMidiFromUrl(`${url}.mid`)
+			loadMidiFromUrl(`${url}.mid`),
 		]).then(([_, midi]) => {
 			this.musicLoaded = true;
+			player.sync().start(0);	//Sync the source to the Transport
 			this.scheduleTimeline(midi);
 		});
+	}
+
+	get musicState() {
+		return Tone.Transport.state;
 	}
 
 	startMusic() {
@@ -29,21 +29,20 @@ export default class musicController {
 			throw new Error("Music can't be started before it is loaded!")
 		}
 
-		this.musicState = MUSICSTATE.START;
-		this.player.start();
+		Tone.start();
 		Tone.Transport.start();
 	}
 
 	stopMusic() {
-		this.musicState = MUSICSTATE.STOP;
-		this.player.stop();
 		Tone.Transport.stop();
 	}
 
 	pauseMusic() {
-		this.musicState = MUSICSTATE.PAUSE;
-		this.player.stop();
 		Tone.Transport.pause();
+	}
+
+	resumeMusic() {
+		Tone.Transport.start();
 	}
 
 	scheduleTimeline(midi) {
@@ -72,12 +71,24 @@ export default class musicController {
 		midi.tracks[0].notes.forEach((note, noteIndex) => {
 			Tone.Transport.schedule(time => {
 				Tone.Draw.schedule(() => {
-					this.activeLight(noteIndex % 5);
+					if (this.onNoteBegin) {
+						this.onNoteBegin({
+							midi: note.midi,
+							index: noteIndex,
+							track: 
+						});
+					}
 				}, time);
 			}, note.time);
 			Tone.Transport.schedule(time => {
 				Tone.Draw.schedule(() => {
-					this.deactiveLight(noteIndex % 5);
+					if (this.onNoteEnd) {
+						this.onNoteEnd({
+							midi: note.midi,
+							duration: note.duration,
+							index: noteIndex
+						});
+					}
 				}, time);
 			}, note.time+note.duration);
 		});
