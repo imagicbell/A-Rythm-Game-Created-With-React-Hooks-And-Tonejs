@@ -1,15 +1,13 @@
 import { Provider } from 'react-redux';
 import { configureStore } from '../store/index';
-import LightList from './LightList';
-import MusicPlay from './MusicPlay';
+import Playboard from '../components/Playboard';
 
 const store = configureStore();
 
 function App() {
   return (
     <Provider store={store}>
-      <LightList />
-      <MusicPlay />
+      <Playboard />
     </Provider>
   );
 }

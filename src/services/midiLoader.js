@@ -7,8 +7,6 @@ export async function loadMidiFromUrl(url: String) {
 	prepareMidi(midi);
 	// console.log(`read midi file\n ${JSON.stringify(midi, null, "\t")}`);
 	console.log("read midi file", midi);
-
-	editMusic(midi);
 	return midi;
 }
 
@@ -23,4 +21,6 @@ export async function loadMidiFromFile(file: File) {
 function prepareMidi(midi) {
 	midi.header.timeSignatures.forEach(ts => ts.time = midi.header.ticksToSeconds(ts.ticks));
 	midi.header.keySignatures.forEach(ks => ks.time = midi.header.ticksToSeconds(ks.ticks));
+
+	editMusic(midi);
 }

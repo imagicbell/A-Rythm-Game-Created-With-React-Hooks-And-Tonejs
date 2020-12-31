@@ -1,7 +1,7 @@
 import * as Tone from 'tone';
 import { loadMidiFromUrl } from './midiLoader';
-import { type NotePlayInfo, PLAY_TYPE_PRESS } from '../global/notes';
-import { NOTE_PREVIEW_TIME } from '../global/constants';
+import { type NotePlayInfo } from '../global/notes';
+import { NOTE_PREVIEW_TIME } from '../global/settings';
 
 export default class musicController {
 	musicLoaded: Boolean = false;
@@ -17,8 +17,12 @@ export default class musicController {
 			loadMidiFromUrl(`${url}.mid`),
 		]).then(([_, midi]) => {
 			this.musicLoaded = true;
-			player.sync().start(0);	//Sync the source to the Transport
 			this.scheduleTimeline(midi);
+			Tone.Transport.schedule(time => {
+				player.sync().start(); //Sync the source to the Transport
+			}, NOTE_PREVIEW_TIME);
+
+			Tone.start();
 		});
 	}
 
@@ -31,7 +35,7 @@ export default class musicController {
 			throw new Error("Music can't be started before it is loaded!")
 		}
 
-		Tone.start();
+		
 		Tone.Transport.start();
 	}
 
@@ -55,7 +59,7 @@ export default class musicController {
 			} else {
 				Tone.Transport.schedule(time => {
 					Tone.Transport.bpm.value = tempo.bpm;
-				}, tempo.time);
+				}, tempo.time + NOTE_PREVIEW_TIME);
 			}
 		});
 	
@@ -65,7 +69,7 @@ export default class musicController {
 			} else {
 				Tone.Transport.schedule(time => {
 					Tone.Transport.timeSignature = [ts.beats, ts.beatType];
-				}, ts.time);
+				}, ts.time + NOTE_PREVIEW_TIME);
 			}
 		});
 	
@@ -79,29 +83,27 @@ export default class musicController {
 					Tone.Draw.schedule(() => {
 						this.onNotePreview(note.playInfo);
 					}, time);
-				}, note.time - NOTE_PREVIEW_TIME);
+				}, note.time);
 
 				//begin
 				Tone.Transport.schedule(time => {
 					Tone.Draw.schedule(() => {
 						this.onNoteBegin(note.playInfo);
 					}, time);
-				}, note.time);
+				}, note.time + NOTE_PREVIEW_TIME);
 
 				//end
-				if (note.playInfo.playType === PLAY_TYPE_PRESS) {
-					Tone.Transport.schedule(time => {
-						Tone.Draw.schedule(() => {
-							this.onNoteEnd(note.playInfo);
-						}, time);
-					}, note.time + note.duration);
-				}
+				Tone.Transport.schedule(time => {
+					Tone.Draw.schedule(() => {
+						this.onNoteEnd(note.playInfo);
+					}, time);
+				}, note.time + note.duration + NOTE_PREVIEW_TIME);
 			}
 		}
 
 		Tone.Transport.schedule(time => {
 			console.log("midiplayer: finish play");
 			this.stopMusic();
-		}, midi.duration);
+		}, midi.duration + NOTE_PREVIEW_TIME);
 	}
 }

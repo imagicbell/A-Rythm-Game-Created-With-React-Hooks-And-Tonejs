@@ -1,4 +1,4 @@
-import { LIGHT_NUM, CLICK_THRESHOLD } from '../global/constants';
+import { LIGHT_NUM, CLICK_THRESHOLD } from '../global/settings';
 import { notes, PLAY_TYPE_CLICK, PLAY_TYPE_PRESS } from '../global/notes';
 
 export function editMusic(midi) {

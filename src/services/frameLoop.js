@@ -6,7 +6,7 @@ export function useFrameLoop(callback) {
 
 	const loop = time => {
 		if (previousTime.current) {
-			callback(time - previousTime.current);	
+			callback(0.001 * (time - previousTime.current));	
 		}
 
 		previousTime.current = time;
