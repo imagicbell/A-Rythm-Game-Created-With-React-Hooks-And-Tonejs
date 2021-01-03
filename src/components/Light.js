@@ -1,17 +1,27 @@
-export default function Light({x, y, radius, color, state}) {
-	const fillColor = color + (state === "active" ? "ff" : "55");
-	const style = state === "active" ? {
-		stroke: "#fef5c7",
-		strokeWidth: "8"
-	} : {};
+export default class Light {
+	constructor({ x, y, size, color }) {
+		this.x = x;
+		this.y = y;
+		this.size = size;
+		this.color = color;
+		this.state = "normal";
+	}
 
-	return (
-		<circle
-			cx={x}
-			cy={y}
-			r={radius}
-			fill={color + "55"}
-			// style={style}
-		/>
-	)
+	active() {
+		this.state = "active";
+	}
+
+	deactive() {
+		this.state = "normal";
+	}
+
+	draw(context) {
+		context.fillStyle = this.color;
+		context.beginPath();
+		context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+		context.fill();
+
+		if (this.state === "active")
+			context.stroke();
+	}
 }
