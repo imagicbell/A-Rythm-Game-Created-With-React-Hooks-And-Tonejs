@@ -18,10 +18,8 @@ export default class MusicPlayer {
 		]).then(([_, midi]) => {
 			this.musicLoaded = true;
 			this.scheduleTimeline(midi);
-			// player.sync().start(NOTE_PREVIEW_TIME);
-			Tone.Transport.schedule(time => {
-				player.sync().start(); //Sync the source to the Transport
-			}, NOTE_PREVIEW_TIME);
+			player.sync().start(NOTE_PREVIEW_TIME);
+			Tone.start();
 		});
 	}
 
@@ -33,8 +31,6 @@ export default class MusicPlayer {
 		if (!this.musicLoaded) {
 			throw new Error("Music can't be started before it is loaded!")
 		}
-
-		Tone.start();
 		Tone.Transport.start();
 	}
 
