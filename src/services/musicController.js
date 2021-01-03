@@ -3,7 +3,7 @@ import { loadMidiFromUrl } from './midiLoader';
 import { type NotePlayInfo } from '../global/notes';
 import { NOTE_PREVIEW_TIME } from '../global/settings';
 
-export default class musicController {
+export default class MusicController {
 	musicLoaded: Boolean = false;
 	onNoteBegin: (note: NotePlayInfo) => void = null;
 	onNoteEnd: (note: NotePlayInfo) => void = null;

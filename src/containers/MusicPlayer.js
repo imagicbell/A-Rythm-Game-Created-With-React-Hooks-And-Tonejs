@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import musicController from "../services/musicController";
+import MusicController from "../services/musicController";
 import { addDrop } from '../store/actions/drops';
 import { activeLight, deactiveLight } from "../store/actions/lights";
 import { LIGHT_POS } from '../global/settings';
@@ -11,7 +11,7 @@ function MusicPlayer(props) {
 	refProps.current = props;
 
 	useEffect(() => {
-		musicCtrl.current = new musicController();
+		musicCtrl.current = new MusicController();
 		musicCtrl.current.loadMusic("Melody-of-the-Night-5");
 		musicCtrl.current.onNotePreview = noteInfo => {
 			refProps.current.addDrop({
