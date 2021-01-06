@@ -28,6 +28,6 @@ export const SCORE_PERFECT = "Perfect";
 export const SCORE_GOOD = "Good";
 export const SCORE_MISS = "Miss";
 export const SCORE_CRIETERIA = {
-	"Perfect": 5,
-	"Good": 10
+	"Perfect": 6,
+	"Good": 20
 };

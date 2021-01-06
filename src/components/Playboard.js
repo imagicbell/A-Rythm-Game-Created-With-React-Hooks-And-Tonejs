@@ -1,10 +1,13 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import MusicPlayer from '../services/MusicPlayer';
 import Track from './Track';
 import Score from './Score';
 import Canvas from './Canvas';
-import { PLAYBOARD_WIDTH, PLAYBOARD_HEIGHT, LIGHT_COLORS, KEY_MAP } from "../global/settings";
+import { 
+	PLAYBOARD_WIDTH, PLAYBOARD_HEIGHT, LIGHT_COLORS, KEY_MAP,
+	SCORE_PERFECT, SCORE_GOOD, SCORE_MISS
+ } from "../global/settings";
 
 const wrapStyle = {
 	display: "flex",
@@ -17,17 +20,16 @@ const canvasStyle = {
 	border: "1px solid #000000"
 }
 
-
 export default function Playboard() {
-	const musicPlayer = useRef(null);
+	const [scoreData, setScoreData] = useState({ combo: 0, result: "" });
 	const trackList = useRef(null);
-	const score = useRef(null);
+	const musicPlayer = useRef(null);
 	
 	//initialize
 	useEffect(() => {
 		const colors = LIGHT_COLORS[Math.floor(Math.random() * LIGHT_COLORS.length)];
 		trackList.current = Array(colors.length).fill().map((_, index) => new Track(index, colors[index]));
-		trackList.current.forEach(track => track.onClickResult = score.current.checkResult);
+		trackList.current.forEach(track => track.onClickResult = decideScore);
 
 		musicPlayer.current = new MusicPlayer();
 		musicPlayer.current.loadMusic("Fur_Elise");
@@ -49,6 +51,20 @@ export default function Playboard() {
 		trackList.current.forEach(track => track.draw(ctx, deltaTime));
 	}
 
+	const decideScore = result => {
+		switch (result) {
+			case SCORE_PERFECT:
+			case SCORE_GOOD:
+				setScoreData(prev => ({ combo: prev.combo + 1, result }));
+				break;
+			case SCORE_MISS:
+				setScoreData({ combo: 0, result });
+				break;
+			default:
+				break;
+		}
+	}
+
 	return (
 		<div style={wrapStyle}>
 			<div>
@@ -56,6 +72,7 @@ export default function Playboard() {
 				<button onClick={() => musicPlayer.current.pauseMusic()}>Pause</button>
 				<button onClick={() => musicPlayer.current.resumeMusic()}>Resume</button>
 				<button onClick={() => musicPlayer.current.stopMusic()}>Stop</button>
+				<Score combo={scoreData.combo} result={scoreData.result} />
 			</div>
 			<Canvas 
 				id="playCanvas" 
@@ -64,7 +81,6 @@ export default function Playboard() {
 				style={canvasStyle} 
 				draw={draw}
 			/>
-			<Score ref={score} />
 		</div>
 	)
 }

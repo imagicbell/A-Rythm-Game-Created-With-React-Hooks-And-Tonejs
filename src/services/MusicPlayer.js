@@ -68,7 +68,8 @@ export default class MusicPlayer {
 			}
 		});
 	
-		for (const track of midi.tracks) {
+		/*for (const track of midi.tracks) */{
+			const track = midi.tracks[0];
 			for (const note of track.notes) {
 				if (!note.playInfo)
 					continue;

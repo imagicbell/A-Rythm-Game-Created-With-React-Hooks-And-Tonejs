@@ -3,7 +3,8 @@ import Light from "./Light";
 import { 
 	LIGHT_POS, LIGHT_SIZE, 
 	PLAYBOARD_HEIGHT, DROP_SIZE, NOTE_PREVIEW_TIME,
-	SCORE_PERFECT, SCORE_GOOD, SCORE_MISS, SCORE_CRIETERIA } from '../global/settings';
+	SCORE_PERFECT, SCORE_GOOD, SCORE_MISS, SCORE_CRIETERIA 
+} from '../global/settings';
 import { PLAY_TYPE_PRESS } from "../global/notes";
 
 const DROP_HEIGHT = PLAYBOARD_HEIGHT-DROP_SIZE/3.5;
@@ -51,11 +52,13 @@ export default class Track {
 		if (this.pressedDrop) {
 			return;
 		}
+		if (this.drops.length === 0) {
+			return;
+		}
 
 		this.pressedDrop = this.drops[0];
 		let distance = DROP_HEIGHT - this.pressedDrop.y;
 		this.decideResult(distance);
-
 		this.activeLight();
 	}
 
@@ -69,22 +72,22 @@ export default class Track {
 			this.decideResult(distance);
 		}
 
-		this.pressedDrop = null;
 		this.deactiveLight();
+		this.pressedDrop = null;
 	}
 
 	decideResult(distance) {
-		if (distance > SCORE_CRIETERIA[SCORE_GOOD]) {
-			this.onClickResult(SCORE_MISS);
-		} else if (distance > SCORE_CRIETERIA[SCORE_PERFECT]) {
-			this.onClickResult(SCORE_GOOD);
-		} else if (distance > -SCORE_CRIETERIA[SCORE_PERFECT]) {
-			this.onClickResult(SCORE_PERFECT);
-		} else if (distance > -SCORE_CRIETERIA[SCORE_GOOD]) {
-			this.onClickResult(SCORE_GOOD);
+		let result;
+		distance = Math.abs(distance);
+		if (distance < SCORE_CRIETERIA[SCORE_PERFECT]) {
+			result = SCORE_PERFECT;
+		} else if (distance < SCORE_CRIETERIA[SCORE_GOOD]) {
+			result = SCORE_GOOD;
 		} else {
-			this.onClickResult(SCORE_MISS);
+			result = SCORE_MISS;
 		}
+		this.onClickResult(result);
+		console.log(distance, result);
 	}
 
 	draw(context, deltaTime) {
@@ -95,6 +98,8 @@ export default class Track {
 				drop.draw(context);
 			}
 		});
-		this.drops = this.drops.filter(drop => drop.y <= DROP_HEIGHT + SCORE_CRIETERIA[SCORE_GOOD]);
+		if (this.drops.length > 0 && this.drops[0].y > DROP_HEIGHT + SCORE_CRIETERIA[SCORE_GOOD]) {
+			this.drops.shift();
+		}
 	}
 }
