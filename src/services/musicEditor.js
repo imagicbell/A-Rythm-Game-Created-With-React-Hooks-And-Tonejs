@@ -8,7 +8,8 @@ export function editMusic(midi) {
 			let lightId = lightIdOffset + notes.find(n => n.midi === note.midi).lightId;
 			note.playInfo = {
 				lightId,
-				playType: note.duration > CLICK_THRESHOLD ? PLAY_TYPE_PRESS : PLAY_TYPE_CLICK
+				playType: note.duration > CLICK_THRESHOLD ? PLAY_TYPE_PRESS : PLAY_TYPE_CLICK,
+				duration: note.duration
 			};
 		});
 	});

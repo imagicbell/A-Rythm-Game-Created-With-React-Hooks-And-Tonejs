@@ -2,7 +2,7 @@ export const PLAYBOARD_WIDTH = 540;
 export const PLAYBOARD_HEIGHT = 720;
 
 export const NOTE_PREVIEW_TIME = 3;
-export const CLICK_THRESHOLD = 0.1;
+export const CLICK_THRESHOLD = 1;
 
 export const LIGHT_NUM = 6;
 export const LIGHT_COLORS = [
@@ -14,3 +14,20 @@ export const LIGHT_POS = [70, 150, 230, 310, 390, 470];
 
 export const DROP_SIZE = 30;
 export const DROP_SPEED = 1;
+
+export const KEY_MAP = {
+	'a': 0,
+	's': 1,
+	'd': 2,
+	'j': 3,
+	'k': 4,
+	'l': 5
+};
+
+export const SCORE_PERFECT = "Perfect";
+export const SCORE_GOOD = "Good";
+export const SCORE_MISS = "Miss";
+export const SCORE_CRIETERIA = {
+	"Perfect": 5,
+	"Good": 10
+};

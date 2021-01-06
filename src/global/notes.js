@@ -99,7 +99,8 @@ export const notes : NoteType[] = [
 
 export type NotePlayInfo = {
 	lightId: Number,
-	playType: String, 	// "click", "press"
+  playType: String, 	// "click", "press"
+  duration: Number
 }
 
 export const PLAY_TYPE_CLICK = "click";

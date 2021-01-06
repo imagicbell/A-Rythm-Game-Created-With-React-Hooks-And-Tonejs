@@ -75,23 +75,29 @@ export default class MusicPlayer {
 				
 				//preview
 				Tone.Transport.schedule(time => {
-					Tone.Draw.schedule(() => {
-						this.onNotePreview(note.playInfo);
-					}, time);
+					if (this.onNotePreview) {
+						Tone.Draw.schedule(() => {
+							this.onNotePreview(note.playInfo);
+						}, time);
+					}
 				}, note.time);
-
+				
 				//begin
 				Tone.Transport.schedule(time => {
-					Tone.Draw.schedule(() => {
-						this.onNoteBegin(note.playInfo);
-					}, time);
+					if (this.onNoteBegin) {
+						Tone.Draw.schedule(() => {
+							this.onNoteBegin(note.playInfo);
+						}, time);
+					}
 				}, note.time + NOTE_PREVIEW_TIME);
 
 				//end
 				Tone.Transport.schedule(time => {
-					Tone.Draw.schedule(() => {
-						this.onNoteEnd(note.playInfo);
-					}, time);
+					if (this.onNoteEnd) {
+						Tone.Draw.schedule(() => {
+							this.onNoteEnd(note.playInfo);
+						}, time);
+					}
 				}, note.time + note.duration + NOTE_PREVIEW_TIME);
 			}
 		}

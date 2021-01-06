@@ -1,11 +1,16 @@
 export default class Drop {
-	constructor({id, x, y, speed, size, color}) {
-		this.id = id;
+	constructor({type, x, y, radius, length, speed, color}) {
+		this.type = type;
 		this.x = x;
 		this.y = y;
+		this.radius = radius;
+		this.length = length;
 		this.speed = speed;
-		this.size = size;
 		this.color = color;
+	}
+
+	get endY() {
+		return this.y - this.length;
 	}
 
 	update(deltaTime) {
@@ -15,7 +20,7 @@ export default class Drop {
 	draw(context) {
 		context.fillStyle = this.color;
 		context.beginPath();
-		context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		context.fill();
 	}
 }

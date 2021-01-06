@@ -1,9 +1,10 @@
-import Canvas from './Canvas';
-import { PLAYBOARD_WIDTH, PLAYBOARD_HEIGHT, LIGHT_POS } from "../global/settings";
 import { useRef, useEffect } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import MusicPlayer from '../services/MusicPlayer';
-import LightList from './LightList';
-import DropList from './DropList';
+import Track from './Track';
+import Score from './Score';
+import Canvas from './Canvas';
+import { PLAYBOARD_WIDTH, PLAYBOARD_HEIGHT, LIGHT_COLORS, KEY_MAP } from "../global/settings";
 
 const wrapStyle = {
 	display: "flex",
@@ -19,30 +20,33 @@ const canvasStyle = {
 
 export default function Playboard() {
 	const musicPlayer = useRef(null);
-	const lightList = useRef(null);
-	const dropList = useRef(null);
+	const trackList = useRef(null);
+	const score = useRef(null);
 	
 	//initialize
 	useEffect(() => {
-		lightList.current = new LightList();
-		dropList.current = new DropList();
+		const colors = LIGHT_COLORS[Math.floor(Math.random() * LIGHT_COLORS.length)];
+		trackList.current = Array(colors.length).fill().map((_, index) => new Track(index, colors[index]));
+		trackList.current.forEach(track => track.onClickResult = score.current.checkResult);
 
 		musicPlayer.current = new MusicPlayer();
-		musicPlayer.current.loadMusic("Melody-of-the-Night-5");
+		musicPlayer.current.loadMusic("Fur_Elise");
 		musicPlayer.current.onNotePreview = noteInfo => {
-			dropList.current.addDrop(LIGHT_POS[noteInfo.lightId], 0, lightList.current.lightColor(noteInfo.lightId));
-		};
-		musicPlayer.current.onNoteBegin = noteInfo => {
-			lightList.current.activeLight(noteInfo.lightId);
-		};
-		musicPlayer.current.onNoteEnd = noteInfo => {
-			lightList.current.deactiveLight(noteInfo.lightId);
+			trackList.current[noteInfo.lightId].addDrop(noteInfo.playType, noteInfo.duration);
 		};
 	}, []);
 
+	useHotkeys(Object.keys(KEY_MAP).join(','), (event, handler) => {
+		const lightId = KEY_MAP[handler.key];
+		if (event.type === "keydown") {
+			trackList.current[lightId].onPressLight();
+		} else if (event.type === "keyup") {
+			trackList.current[lightId].onReleaseLight();
+		}
+	}, { keydown: true, keyup: true });
+
 	const draw = (ctx, deltaTime) => {
-		lightList.current.draw(ctx, deltaTime);
-		dropList.current.draw(ctx, deltaTime);
+		trackList.current.forEach(track => track.draw(ctx, deltaTime));
 	}
 
 	return (
@@ -60,6 +64,7 @@ export default function Playboard() {
 				style={canvasStyle} 
 				draw={draw}
 			/>
+			<Score ref={score} />
 		</div>
 	)
 }
