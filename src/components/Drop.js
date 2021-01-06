@@ -1,3 +1,5 @@
+import { PLAY_TYPE_PRESS } from "../global/notes";
+
 export default class Drop {
 	constructor({type, x, y, radius, length, speed, color}) {
 		this.type = type;
@@ -7,10 +9,28 @@ export default class Drop {
 		this.length = length;
 		this.speed = speed;
 		this.color = color;
+
+		this.state = "";
 	}
 
 	get endY() {
 		return this.y - this.length;
+	}
+
+	get completed() {
+		return (this.type === PLAY_TYPE_PRESS && this.state === "released") || this.state === "pressed";
+	}
+
+	onPress() {
+		if (this.state === "") {
+			this.state = "pressed";
+		}
+	}
+
+	onRelease() {
+		if (this.state === "pressed") {
+			this.state = "released";
+		}
 	}
 
 	update(deltaTime) {

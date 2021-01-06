@@ -5,7 +5,7 @@ import {
 	PLAYBOARD_HEIGHT, DROP_SIZE, NOTE_PREVIEW_TIME,
 	SCORE_PERFECT, SCORE_GOOD, SCORE_MISS, SCORE_CRIETERIA 
 } from '../global/settings';
-import { PLAY_TYPE_PRESS } from "../global/notes";
+import { PLAY_TYPE_CLICK, PLAY_TYPE_PRESS } from "../global/notes";
 
 const DROP_HEIGHT = PLAYBOARD_HEIGHT-DROP_SIZE/3.5;
 const DROP_SPEED = DROP_HEIGHT / NOTE_PREVIEW_TIME;
@@ -57,6 +57,8 @@ export default class Track {
 		}
 
 		this.pressedDrop = this.drops[0];
+		this.pressedDrop.onPress();
+
 		let distance = DROP_HEIGHT - this.pressedDrop.y;
 		this.decideResult(distance);
 		this.activeLight();
@@ -67,6 +69,8 @@ export default class Track {
 			return;
 		}
 
+		this.pressedDrop.onRelease();
+		
 		if (this.pressedDrop.type === PLAY_TYPE_PRESS) {
 			let distance = DROP_HEIGHT - this.pressedDrop.endY;
 			this.decideResult(distance);
@@ -90,16 +94,26 @@ export default class Track {
 		console.log(distance, result);
 	}
 
+	checkDropDie() {
+		if (this.drops.length === 0) {
+			return;
+		}
+		let drop = this.drops[0];
+		if (drop.endY > DROP_HEIGHT + SCORE_CRIETERIA[SCORE_GOOD]) {
+			this.drops.shift();
+			if (!drop.completed) {
+				this.onClickResult(SCORE_MISS);
+			}
+		}
+	}
+
 	draw(context, deltaTime) {
 		this.light.draw(context);
 		this.drops.forEach(drop => {
 			drop.update(deltaTime);
-			if (drop.y < DROP_HEIGHT) {
-				drop.draw(context);
-			}
+			drop.draw(context);
 		});
-		if (this.drops.length > 0 && this.drops[0].y > DROP_HEIGHT + SCORE_CRIETERIA[SCORE_GOOD]) {
-			this.drops.shift();
-		}
+
+		this.checkDropDie();
 	}
 }
