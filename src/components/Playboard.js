@@ -4,24 +4,18 @@ import MusicPlayer from '../services/MusicPlayer';
 import Track from './Track';
 import Score from './Score';
 import Canvas from './Canvas';
+import Controller from './Controller';
 import { 
 	PLAYBOARD_WIDTH, PLAYBOARD_HEIGHT, LIGHT_COLORS, KEY_MAP,
 	SCORE_PERFECT, SCORE_GOOD, SCORE_MISS
- } from "../global/settings";
+} from "../global/settings";
+import "./Playboard.css";
 
-const wrapStyle = {
-	display: "flex",
-	flexDirection: "column",
-	justifyContent: "center",
-	padding: "10px"
-}
-
-const canvasStyle = {
-	border: "1px solid #000000"
-}
+type PLAYSTATE = "PLAY" | "PAUSE" | "STOP";
 
 export default function Playboard() {
 	const [scoreData, setScoreData] = useState({ combo: 0, result: "" });
+	const playState: PLAYSTATE = useRef("STOP");
 	const trackList = useRef(null);
 	const musicPlayer = useRef(null);
 	
@@ -48,7 +42,28 @@ export default function Playboard() {
 	}, { keydown: true, keyup: true });
 
 	const draw = (ctx, deltaTime) => {
-		trackList.current.forEach(track => track.draw(ctx, deltaTime));
+		trackList.current.forEach(track => track.draw(ctx, playState.current === "PLAY" ? deltaTime : 0));
+	}
+
+	const changePlayState = state => {
+		switch (state) {
+			case "PLAY":
+				if (playState.current === "STOP") {
+					musicPlayer.current.startMusic();
+				} else {
+					musicPlayer.current.resumeMusic();
+				}
+				break;
+			case "PAUSE":
+				musicPlayer.current.pauseMusic();
+				break;
+			case "STOP":
+				musicPlayer.current.stopMusic();
+				break;
+			default:
+				break;
+		}
+		playState.current = state;
 	}
 
 	const decideScore = result => {
@@ -66,19 +81,20 @@ export default function Playboard() {
 	}
 
 	return (
-		<div style={wrapStyle}>
-			<div>
-				<button onClick={() => musicPlayer.current.startMusic()}>Play</button>
-				<button onClick={() => musicPlayer.current.pauseMusic()}>Pause</button>
-				<button onClick={() => musicPlayer.current.resumeMusic()}>Resume</button>
-				<button onClick={() => musicPlayer.current.stopMusic()}>Stop</button>
+		<div className="playboard">
+			<div className="header">
+				<Controller 
+					onPlay={()=>changePlayState("PLAY")}
+					onStop={()=>changePlayState("STOP")}
+					onPause={()=>changePlayState("PAUSE")}
+					onResume={()=>changePlayState("PLAY")}
+				/>
 				<Score combo={scoreData.combo} result={scoreData.result} />
 			</div>
 			<Canvas 
 				id="playCanvas" 
 				width={PLAYBOARD_WIDTH} 
 				height={PLAYBOARD_HEIGHT} 
-				style={canvasStyle} 
 				draw={draw}
 			/>
 		</div>
