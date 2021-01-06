@@ -2,7 +2,7 @@ export const PLAYBOARD_WIDTH = 540;
 export const PLAYBOARD_HEIGHT = 720;
 
 export const NOTE_PREVIEW_TIME = 3;
-export const CLICK_THRESHOLD = 1;
+export const CLICK_THRESHOLD = 0.3;
 
 export const LIGHT_NUM = 6;
 export const LIGHT_COLORS = [

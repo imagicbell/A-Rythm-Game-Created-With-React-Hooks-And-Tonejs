@@ -42,5 +42,13 @@ export default class Drop {
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		context.fill();
+
+		if (this.type === PLAY_TYPE_PRESS) {
+			context.fillRect(this.x - this.radius, this.endY, this.radius*2, this.length);
+			
+			context.beginPath();
+			context.arc(this.x, this.endY, this.radius, 0, 2 * Math.PI);
+			context.fill();
+		}
 	}
 }
