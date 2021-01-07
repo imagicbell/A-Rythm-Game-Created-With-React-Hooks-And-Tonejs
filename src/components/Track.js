@@ -5,7 +5,7 @@ import {
 	PLAYBOARD_HEIGHT, DROP_SIZE, NOTE_PREVIEW_TIME,
 	SCORE_PERFECT, SCORE_GOOD, SCORE_MISS, SCORE_CRIETERIA 
 } from '../global/settings';
-import { PLAY_TYPE_CLICK, PLAY_TYPE_PRESS } from "../global/notes";
+import { PLAY_TYPE_PRESS } from "../global/notes";
 
 const DROP_HEIGHT = PLAYBOARD_HEIGHT-DROP_SIZE/3.5;
 const DROP_SPEED = DROP_HEIGHT / NOTE_PREVIEW_TIME;

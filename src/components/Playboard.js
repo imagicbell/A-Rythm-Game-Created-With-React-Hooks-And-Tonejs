@@ -11,11 +11,15 @@ import {
 } from "../global/settings";
 import "./Playboard.css";
 
-type PLAYSTATE = "PLAY" | "PAUSE" | "STOP";
+const initPlayData = {
+	state: "STOP",
+	useLeft: true,
+	useRight: true,
+}
 
 export default function Playboard() {
 	const [scoreData, setScoreData] = useState({ combo: 0, result: "" });
-	const playState: PLAYSTATE = useRef("STOP");
+	const playData = useRef(initPlayData);
 	const trackList = useRef(null);
 	const musicPlayer = useRef(null);
 	
@@ -28,7 +32,10 @@ export default function Playboard() {
 		musicPlayer.current = new MusicPlayer();
 		musicPlayer.current.loadMusic("Fur_Elise");
 		musicPlayer.current.onNotePreview = noteInfo => {
-			trackList.current[noteInfo.lightId].addDrop(noteInfo.playType, noteInfo.duration);
+			if ((noteInfo.trackId === 0 && playData.current.useRight) || 
+					(noteInfo.trackId === 1 && playData.current.useLeft)) {
+						trackList.current[noteInfo.lightId].addDrop(noteInfo.playType, noteInfo.duration);
+					}
 		};
 	}, []);
 
@@ -42,13 +49,13 @@ export default function Playboard() {
 	}, { keydown: true, keyup: true });
 
 	const draw = (ctx, deltaTime) => {
-		trackList.current.forEach(track => track.draw(ctx, playState.current === "PLAY" ? deltaTime : 0));
+		trackList.current.forEach(track => track.draw(ctx, playData.current.state === "PLAY" ? deltaTime : 0));
 	}
 
 	const changePlayState = state => {
 		switch (state) {
 			case "PLAY":
-				if (playState.current === "STOP") {
+				if (playData.current.state === "STOP") {
 					musicPlayer.current.startMusic();
 				} else {
 					musicPlayer.current.resumeMusic();
@@ -63,7 +70,7 @@ export default function Playboard() {
 			default:
 				break;
 		}
-		playState.current = state;
+		playData.current.state = state;
 	}
 
 	const decideScore = result => {
@@ -84,10 +91,12 @@ export default function Playboard() {
 		<div className="playboard">
 			<div className="header">
 				<Controller 
-					onPlay={()=>changePlayState("PLAY")}
-					onStop={()=>changePlayState("STOP")}
-					onPause={()=>changePlayState("PAUSE")}
-					onResume={()=>changePlayState("PLAY")}
+					onPlay={() => changePlayState("PLAY")}
+					onStop={() => changePlayState("STOP")}
+					onPause={() => changePlayState("PAUSE")}
+					onResume={() => changePlayState("PLAY")}
+					onUseLeft={useLeft => playData.current.useLeft = useLeft}
+					onUseRight={useRight => playData.current.useRight = useRight}
 				/>
 				<Score combo={scoreData.combo} result={scoreData.result} />
 			</div>
