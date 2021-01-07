@@ -119,4 +119,10 @@ export default class Track {
 
 		this.checkDropDie();
 	}
+
+	clean() {
+		this.drops = [];
+		this.pressedDrop = null;
+		this.light.deactive();
+	}
 }

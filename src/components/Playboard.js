@@ -66,6 +66,7 @@ export default function Playboard() {
 				break;
 			case "STOP":
 				musicPlayer.current.stopMusic();
+				trackList.current.forEach(track => track.clean());
 				break;
 			default:
 				break;
