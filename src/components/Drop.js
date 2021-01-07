@@ -18,7 +18,7 @@ export default class Drop {
 	}
 
 	get completed() {
-		return (this.type === PLAY_TYPE_PRESS && this.state === "released") || this.state === "pressed";
+		return (this.type === PLAY_TYPE_PRESS && this.state === "released") || this.state !== "";
 	}
 
 	onPress() {
@@ -45,7 +45,7 @@ export default class Drop {
 
 		if (this.type === PLAY_TYPE_PRESS) {
 			context.fillRect(this.x - this.radius, this.endY, this.radius*2, this.length);
-			
+
 			context.beginPath();
 			context.arc(this.x, this.endY, this.radius, 0, 2 * Math.PI);
 			context.fill();

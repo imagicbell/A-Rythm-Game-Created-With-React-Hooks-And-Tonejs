@@ -40,8 +40,8 @@ export default class Track {
 		}));
 	}
 
-	activeLight() {
-		this.light.active();
+	activeLight(level) {
+		this.light.active(level);
 	}
 
 	deactiveLight() {
@@ -60,8 +60,10 @@ export default class Track {
 		this.pressedDrop.onPress();
 
 		let distance = DROP_HEIGHT - this.pressedDrop.y;
-		this.decideResult(distance);
-		this.activeLight();
+		let result = this.decideResult(distance);
+		if (result !== SCORE_MISS) {
+			this.activeLight(result);
+		}
 	}
 
 	onReleaseLight() {
@@ -70,7 +72,7 @@ export default class Track {
 		}
 
 		this.pressedDrop.onRelease();
-		
+
 		if (this.pressedDrop.type === PLAY_TYPE_PRESS) {
 			let distance = DROP_HEIGHT - this.pressedDrop.endY;
 			this.decideResult(distance);
@@ -92,6 +94,7 @@ export default class Track {
 		}
 		this.onClickResult(result);
 		console.log(distance, result);
+		return result;
 	}
 
 	checkDropDie() {

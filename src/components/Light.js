@@ -1,3 +1,5 @@
+import { SCORE_PERFECT, SCORE_GOOD } from "../global/settings";
+
 export default class Light {
 	constructor({ x, y, size, color }) {
 		this.x = x;
@@ -7,8 +9,8 @@ export default class Light {
 		this.state = "normal";
 	}
 
-	active() {
-		this.state = "active";
+	active(level) {
+		this.state = level;
 	}
 
 	deactive() {
@@ -16,12 +18,18 @@ export default class Light {
 	}
 
 	draw(context) {
+		if (this.state === SCORE_PERFECT) {
+			context.shadowBlur = 30;
+			context.shadowColor = "#fff855";
+		} else if (this.state === SCORE_GOOD) {
+			context.shadowBlur = 30;
+			context.shadowColor = "#1cfc66";
+		}
 		context.fillStyle = this.color;
 		context.beginPath();
 		context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
-		context.fill();
+		context.fill();		
 
-		if (this.state === "active")
-			context.stroke();
+		context.shadowBlur = 0;
 	}
 }
