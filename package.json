@@ -7,6 +7,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@tonejs/midi": "^2.0.25",
+    "canvas": "^2.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hotkeys-hook": "^3.0.1",
@@ -37,5 +38,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }
