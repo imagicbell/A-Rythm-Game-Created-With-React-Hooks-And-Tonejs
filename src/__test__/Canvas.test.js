@@ -23,6 +23,7 @@ describe("Custom Canvas component", () => {
 		container = null;
 
 		window.requestAnimationFrame.mockRestore();
+		jest.clearAllMocks();
 		jest.clearAllTimers();
 	});
 

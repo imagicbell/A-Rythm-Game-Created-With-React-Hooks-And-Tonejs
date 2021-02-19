@@ -92,7 +92,9 @@ export default class Track {
 		} else {
 			result = SCORE_MISS;
 		}
-		this.onClickResult(result);
+		if (this.onClickResult) {
+			this.onClickResult(result);
+		}
 		console.log(distance, result);
 		return result;
 	}

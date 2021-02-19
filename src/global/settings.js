@@ -13,7 +13,6 @@ export const LIGHT_SIZE = 35;
 export const LIGHT_POS = [70, 150, 230, 310, 390, 470];
 
 export const DROP_SIZE = 30;
-export const DROP_SPEED = 1;
 
 export const KEY_MAP = {
 	'a': 0,
